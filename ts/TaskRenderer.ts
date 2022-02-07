@@ -1,5 +1,5 @@
 import dragula from "dragula";
-import { Task } from "./Task";
+import { Status, statusMap, Task } from "./Task";
 
 export class TaskRenderer {
   constructor(
@@ -15,15 +15,28 @@ export class TaskRenderer {
   remove(task: Task) {
     const taskEl = document.getElementById(task.id)
     if (!taskEl) return
-    this.todoList.removeChild(taskEl)
+
+    if (task.status === statusMap.todo) {
+      this.todoList.removeChild(taskEl)
+    }
+    if (task.status === statusMap.doing) {
+      this.doingList.removeChild(taskEl)
+    }
+    if (task.status === statusMap.done) {
+      this.doneList.removeChild(taskEl)
+    }
   }
-  subscribeDragAndDrop() {
-    dragula([this.todoList, this.doingList, this.doneList]).on('drop', (el, target, source, sibling) => {
-      console.log(el)
-      console.log(target)
-      console.log(source)
-      console.log(sibling)
+  subscribeDragAndDrop(onDrop: (el: Element, sibling: Element | null, newStatus: Status) => void) {
+    dragula([this.todoList, this.doingList, this.doneList]).on('drop', (el, target, _source, sibling) => {
+      let newStatus = statusMap.todo
+      if (target.id === 'doingList') newStatus = statusMap.doing
+      if (target.id === 'doneList') newStatus = statusMap.done
+
+      onDrop(el, sibling, newStatus)
     })
+  }
+  getId(el: Element) {
+    return el.id
   }
   private render(task: Task) {
     const taskEl = document.createElement('div')
