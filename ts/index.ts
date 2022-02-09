@@ -1,5 +1,5 @@
 import { EventListener } from './EventListener'
-import { Status, Task } from './Task'
+import { Status, statusMap, Task } from './Task'
 import { TaskCollection } from './TaskCollection'
 import { TaskRenderer } from './TaskRenderer'
 class Application {
@@ -33,10 +33,7 @@ class Application {
   }
   private handleClickDeleteTask = (task: Task) => {
     if (!window.confirm(`${task.title} delete?`)) return
-    this.eventListener.remove(task.id)
-    this.taskCollection.delete(task)
-    this.taskRenderer.remove(task)
-    console.log(this.taskCollection)
+    this.executeDeleteTask(task)
   }
   private handleDropAndDrop = (el: Element, sibling: Element | null, newStatus: Status) => {
     const taskId = this.taskRenderer.getId(el)
@@ -51,7 +48,15 @@ class Application {
   }
   private handleClickDeleteAllDoneTasks = () => {
     if (!window.confirm('delete all done?')) return
-    console.log('delete')
+    const doneTasks = this.taskCollection.filter(statusMap.done)
+    doneTasks.forEach((task) => {
+      this.executeDeleteTask(task)
+    });
+  }
+  private executeDeleteTask = (task: Task) => {
+    this.eventListener.remove(task.id)
+    this.taskCollection.delete(task)
+    this.taskRenderer.remove(task)
   }
 }
 window.addEventListener('load', () => {
