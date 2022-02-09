@@ -12,7 +12,9 @@ class Application {
   )
   start() {
     const createForm = document.getElementById('createForm') as HTMLElement
+    const deleteAllDoneTaskButton = document.getElementById('deleteAllDoneTask') as HTMLElement
     this.eventListener.add('submit-handler', 'submit', createForm, this.handleSubmit)
+    this.eventListener.add('click-handler', 'click', deleteAllDoneTaskButton, this.handleClickDeleteAllDoneTasks)
     this.taskRenderer.subscribeDragAndDrop(this.handleDropAndDrop)
   }
   private handleSubmit = (e: Event) => {
@@ -46,6 +48,10 @@ class Application {
     task.update({ status: newStatus })
     this.taskCollection.update(task)
     console.log(sibling)
+  }
+  private handleClickDeleteAllDoneTasks = () => {
+    if (!window.confirm('delete all done?')) return
+    console.log('delete')
   }
 }
 window.addEventListener('load', () => {
