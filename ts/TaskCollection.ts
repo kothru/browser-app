@@ -5,7 +5,7 @@ export class TaskCollection {
   private tasks: Task[] = []
   constructor() {
     this.storage = localStorage
-    this.getStoredTasks()
+    this.tasks = this.getStoredTasks()
   }
   add(task: Task) {
     this.tasks.push(task)

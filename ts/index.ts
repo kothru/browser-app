@@ -11,12 +11,19 @@ class Application {
     document.getElementById('doneList') as HTMLElement
   )
   start() {
+    const taskItems = this.taskRenderer.renderAll(this.taskCollection)
+    console.log(taskItems);
     const createForm = document.getElementById('createForm') as HTMLElement
     const deleteAllDoneTaskButton = document.getElementById('deleteAllDoneTask') as HTMLElement
+
+    taskItems.forEach(({ task, deleteButtonEl }) => {
+      this.eventListener.add(task.id, 'click', deleteButtonEl, () => this.handleClickDeleteTask(task))
+    })
     this.eventListener.add('submit-handler', 'submit', createForm, this.handleSubmit)
     this.eventListener.add('click-handler', 'click', deleteAllDoneTaskButton, this.handleClickDeleteAllDoneTasks)
     this.taskRenderer.subscribeDragAndDrop(this.handleDropAndDrop)
   }
+
   private handleSubmit = (e: Event) => {
     e.preventDefault()
     const titleInput = document.getElementById('title') as HTMLInputElement
